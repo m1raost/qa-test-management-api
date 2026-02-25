@@ -34,16 +34,12 @@ class TestCase(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    steps: Mapped[str | None] = mapped_column(Text, nullable=True)          # numbered steps as text / markdown
+    steps: Mapped[str | None] = mapped_column(Text, nullable=True)
     expected_result: Mapped[str | None] = mapped_column(Text, nullable=True)
     priority: Mapped[Priority] = mapped_column(Enum(Priority), default=Priority.medium, nullable=False)
     severity: Mapped[Severity] = mapped_column(Enum(Severity), default=Severity.major, nullable=False)
     status: Mapped[CaseStatus] = mapped_column(Enum(CaseStatus), default=CaseStatus.draft, nullable=False)
-
-    # FK → test_suites
     suite_id: Mapped[int] = mapped_column(ForeignKey("test_suites.id"), nullable=False)
-    suite: Mapped["TestSuite"] = relationship(back_populates="test_cases")  # type: ignore[name-defined]  # noqa: F821
-
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -53,7 +49,7 @@ class TestCase(Base):
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
-    # One test case → many results across runs
+    suite: Mapped["TestSuite"] = relationship(back_populates="test_cases")  # type: ignore[name-defined]  # noqa: F821
     results: Mapped[list["TestResult"]] = relationship(  # type: ignore[name-defined]  # noqa: F821
         back_populates="test_case", cascade="all, delete-orphan"
     )

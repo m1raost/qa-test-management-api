@@ -11,11 +11,6 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    """
-    Generic CRUD operations reused by every resource.
-    Subclasses only need to override methods that require custom logic.
-    """
-
     def __init__(self, model: type[ModelType]) -> None:
         self.model = model
 
@@ -26,8 +21,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db.query(self.model).offset(skip).limit(limit).all()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType, **extra: Any) -> ModelType:
-        data = obj_in.model_dump()
-        data.update(extra)          # inject server-side fields (e.g. owner_id, hashed_password)
+        data = {**obj_in.model_dump(), **extra}
         db_obj = self.model(**data)
         db.add(db_obj)
         db.commit()
@@ -35,8 +29,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db_obj
 
     def update(self, db: Session, *, db_obj: ModelType, obj_in: UpdateSchemaType) -> ModelType:
-        changes = obj_in.model_dump(exclude_unset=True)   # only fields the caller provided
-        for field, value in changes.items():
+        for field, value in obj_in.model_dump(exclude_unset=True).items():
             setattr(db_obj, field, value)
         db.commit()
         db.refresh(db_obj)

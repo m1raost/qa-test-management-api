@@ -20,16 +20,13 @@ class TestResult(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     status: Mapped[ResultStatus] = mapped_column(Enum(ResultStatus), nullable=False)
-    notes: Mapped[str | None] = mapped_column(Text, nullable=True)        # failure notes, observations
-    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)  # execution time in ms
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     executed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
-
-    # FK → test_runs
     run_id: Mapped[int] = mapped_column(ForeignKey("test_runs.id"), nullable=False)
-    run: Mapped["TestRun"] = relationship(back_populates="results")  # type: ignore[name-defined]  # noqa: F821
-
-    # FK → test_cases
     test_case_id: Mapped[int] = mapped_column(ForeignKey("test_cases.id"), nullable=False)
+
+    run: Mapped["TestRun"] = relationship(back_populates="results")  # type: ignore[name-defined]  # noqa: F821
     test_case: Mapped["TestCase"] = relationship(back_populates="results")  # type: ignore[name-defined]  # noqa: F821

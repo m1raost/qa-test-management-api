@@ -17,7 +17,6 @@ class User(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
 
-    # One user → many test suites
     test_suites: Mapped[list["TestSuite"]] = relationship(  # type: ignore[name-defined]  # noqa: F821
         back_populates="owner", cascade="all, delete-orphan"
     )
