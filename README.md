@@ -16,8 +16,7 @@ Teams use this API to organize their testing work:
 
 - **JWT authentication** — register, login, protected routes with Bearer tokens
 - **Full CRUD** — test suites, cases, runs, and results with ownership checks
-- **52 automated tests** — full API coverage with pytest and in-memory SQLite
-- **Postman collection** — ready-to-import collection with all 21 endpoints
+- **13 automated tests** — covering auth, CRUD operations, and validation with pytest
 - **Formal test cases** — documented in `docs/test-cases.md`
 - **SQL verification queries** — in `sql/verify.sql`
 
@@ -58,14 +57,9 @@ GET    PATCH   DELETE    /api/v1/test-results/{id}
 ## Testing
 
 ```bash
-pytest              # run all 52 tests
+pytest              # run all tests
 pytest -v           # verbose output
 ```
-
-## Postman
-
-Import `postman/qa-api.postman_collection.json` into Postman.
-See `postman/README.md` for setup instructions.
 
 ## SQL Verification
 
@@ -87,8 +81,7 @@ app/
   schemas/      Request/response data shapes
   core/         Auth, logging, error handling
 tests/
-  api/          52 API tests covering all endpoints
-postman/        Postman collection + import guide
-docs/           Formal test cases (15 test cases)
+  api/          13 API tests covering auth, suites, and test cases
+docs/           Formal test cases
 sql/            SQL verification queries
 ```
