@@ -19,6 +19,9 @@ configure_logging()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    import app.models  # noqa: F401 — ensure all models are registered before create_all
+    from app.database import Base, engine
+    Base.metadata.create_all(bind=engine)
     yield
 
 
